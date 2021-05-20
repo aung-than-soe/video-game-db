@@ -1,0 +1,33 @@
+<div class="filters">
+  <mat-form-field>
+    <mat-label>Sort</mat-label>
+    <mat-select panelClass="sort-select" [(ngModel)]="sort">
+      <mat-option *ngFor="let opt of sortOptions" [value]="opt.value">
+        {{ opt.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div class="games">
+  <ng-container *ngFor="let game of games$ | async">
+    <div class="game">
+      <div class="game-thumb-container">
+        <img *ngIf="game.background_image else noImage"
+          [src]="game.background_image"
+          alt="thumbnail"
+          class="game-thumbnail"
+        />
+        <ng-template #noImage>
+          <p>No image</p>
+        </ng-template>
+      </div>
+      <div class="game-description">
+        <p class="game-name" [textContent]="game.name"></p>
+        <div class="game-platforms">
+          <img *ngFor="let gamePlatform of game.parent_platforms" class="game-platform" [src]="'/assets/images/platforms/' + gamePlatform.platform.slug + '.svg'" [alt]="gamePlatform.platform.slug">
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
