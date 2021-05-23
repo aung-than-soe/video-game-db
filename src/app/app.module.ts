@@ -13,14 +13,18 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { HomeComponent } from './pages/home/home.component';
+import { GameDetailComponent } from './pages/game-detail/game-detail.component';
+import { GameTabsComponent } from './components/game-tabs/game-tab.component';
+import { MatCarouselModule } from '@ngbmodule/material-carousel';
 
 @NgModule({
-  declarations: [AppComponent, SearchBarComponent, HomeComponent],
+  declarations: [AppComponent, SearchBarComponent, HomeComponent, GameDetailComponent, GameTabsComponent],
   imports: [
     BrowserModule,
     FormsModule,
     HttpClientModule,
     GaugeModule.forRoot(),
+    MatCarouselModule,
     MaterialModule,
     AppRoutingModule,
     BrowserAnimationsModule,

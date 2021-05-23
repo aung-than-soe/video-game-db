@@ -1,5 +1,6 @@
 
 export interface Game {
+    id: number;
     background_image: string;
     name: string;
     released: string;
@@ -10,7 +11,7 @@ export interface Game {
     genres: Array<Genre>;
     parent_platforms: Array<ParentPlatform>;
     publishers: Array<Publishers>;
-    rating: Array<Rating>;
+    ratings: Array<Rating>;
     screenshots: Array<Screenshots>;
     trailers: Array<Trailer>
 }

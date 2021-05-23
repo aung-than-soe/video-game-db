@@ -1,7 +1,8 @@
 <div class="filters">
   <mat-form-field>
     <mat-label>Sort</mat-label>
-    <mat-select panelClass="sort-select" [(ngModel)]="sort">
+    <mat-select panelClass="sort-select" [(ngModel)]="sort"
+    (selectionChange)="loadGames(sort)">
       <mat-option *ngFor="let opt of sortOptions" [value]="opt.value">
         {{ opt.label }}
       </mat-option>
@@ -10,8 +11,8 @@
 </div>
 
 <div class="games">
-  <ng-container *ngFor="let game of games$ | async">
-    <div class="game">
+  <ng-container *ngFor="let game of games; trackBy: trackById">
+    <div class="game" (click)="openGame(game.id)">
       <div class="game-thumb-container">
         <img *ngIf="game.background_image else noImage"
           [src]="game.background_image"

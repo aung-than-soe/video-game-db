@@ -1,9 +1,9 @@
 import { HttpService } from './../../services/http.service';
-import { APIResponse, Game, ParentPlatform } from './../../models/models';
+import { Game } from './../../models/models';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { concatMap, filter, map, mergeMap, pluck, tap } from 'rxjs/operators';
-import { iif, Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { pluck, take } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -19,31 +19,45 @@ export class HomeComponent implements OnInit {
     { value: '-added', label: 'Added' },
     { value: '-created', label: 'Created' },
     { value: '-updated', label: 'Updated' },
-    { value: 'rating', label: 'Rating' },
-    { value: 'metacritic', label: 'Metacritic'}
+    { value: '-rating', label: 'Rating' },
+    { value: 'metacrit', label: 'Metacritic'}
   ]
   games!: Game[];
-  games$!: Observable<Game[]>;
+  routeSub!: Subscription;
+  gameSub!: Subscription;
 
-  constructor(private httpService: HttpService, private route: ActivatedRoute) { }
+  constructor(private router: Router, private httpService: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.games$ = this.route.params.pipe(
-      pluck('game-search'),
-      mergeMap(value => iif(() => !!value,
-        this.searchGames('metacrit', value),
-        this.searchGames('metacrit')
-      )),
-      pluck('results'),
-      tap(console.log)
-    );
+    this.routeSub = this.route.params
+    .pipe(pluck('game-search'), take(1))
+    .subscribe(val => {
+      if(val) {
+        this.loadGames('metacrit', val);
+      } else {
+        this.loadGames('metacrit');
+      }
+    });
   }
 
-  private searchGames(type: string, search?: string): Observable<APIResponse<Game>> {
-    return this.httpService.getGames(type, search);
+  loadGames(type: string, search?: string): void {
+    this.gameSub = this.httpService.getGames(type, search)
+    .pipe(pluck('results'))
+    .subscribe(games => {
+      this.games = [...games];
+    });
   }
 
-  trackById(_: number, gamePlatform: ParentPlatform): number {
-    return gamePlatform.platform.id;
+  trackById(_: number, obj: Game): number {
+    return obj.id;
+  }
+
+  openGame(id: number) {
+    this.router.navigate(['details', id]);
+  }
+
+  ngOnDestroy(): void {
+    this.gameSub?.unsubscribe();
+    this.routeSub?.unsubscribe();
   }
 }
